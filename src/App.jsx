@@ -5,15 +5,11 @@ import {
   query,
   orderBy,
   limit,
-  doc,
-  getDoc,
-  getDocs,
 } from 'firebase/firestore';
 import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import Signin from './components/Signin';
-// import ChatRoom from './components/ChatRoom';
 import Signout from './components/Signout';
 
 const firebaseConfig = {
@@ -30,50 +26,20 @@ const auth = getAuth(app);
 const firestore = getFirestore(app);
 
 const ChatRoom = () => {
-  // const [messages, setMessages] = useState([]);
-
-  const messagesRef = collection(firestore, 'messages');
-  // const query = messagesRef.orderBy('createdAt').limit(25);
-  // const [messages] = useCollectionData(query, { idField: 'id' });
-
   const [messages, loadingMessages, error] = useCollectionData(
-    query(collection(firestore, 'messages')),
+    query(collection(firestore, 'messages'), orderBy('createdAt'), limit(25)),
   );
 
   console.log('messages', messages);
-
-  // const q = query(messagesRef, orderBy('createdAt', 'desc'), limit(25));
-  // const [messages] = useCollectionData(q, { idField: 'id' });
-
-  // const docSnap = await getDoc(messagesRef);
-
-  // if (docSnap.exists()) {
-  //   console.log('Document data:', docSnap.data());
-  // } else {
-  //   console.log('No such document!');
-  // }
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const messagesRef = collection(firestore, 'messages');
-  //     const q = query(messagesRef, orderBy('createdAt', 'desc'), limit(25));
-  //     const querySnapshot = await getDocs(q);
-  //     const data = querySnapshot.docs.map((doc) => ({
-  //       id: doc.id,
-  //       ...doc.data(),
-  //     }));
-  //     setMessages(data);
-  //   };
-
-  //   fetchData();
-  // }, []);
 
   return (
     <div className='mx-auto h-screen w-[600px] bg-yellow-100'>
       <h1 className='text-center text-xl'>Chat Room</h1>
       <div>
+        {loadingMessages && <p>Loading...</p>}
         {messages &&
           messages.map((msg) => <ChatMessage key={msg.id} message={msg} />)}
+        {error && <p className='text-red-500'>{error}</p>}
       </div>
     </div>
   );
