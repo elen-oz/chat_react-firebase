@@ -15,6 +15,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import Signin from './components/Signin';
 import Signout from './components/Signout';
+import { FaRegUserCircle } from 'react-icons/fa';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyB6Zsb1iMRIQm27wz0W8coHZnBRp5Hf738',
@@ -29,10 +30,13 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const firestore = getFirestore(app);
 
-const ChatRoom = () => {
+const ChatRoom = ({ user }) => {
+  const userName = user.displayName.split(' ')[0];
   const bottom = useRef();
   const messagesRef = collection(firestore, 'messages');
   const [formValue, setFormValue] = useState('');
+
+  console.log('auth.currentUser', auth.currentUser);
 
   const [messages, loadingMessages, error] = useCollectionData(
     query(messagesRef, orderBy('createdAt'), limit(25)),
@@ -44,16 +48,15 @@ const ChatRoom = () => {
     }
   }, [messages]);
 
-  console.log('messages', messages);
-
   const sendMessage = async (e) => {
     e.preventDefault();
-    const { uid } = auth.currentUser;
+    const { uid, photoURL } = auth.currentUser;
 
     await addDoc(messagesRef, {
       text: formValue,
       createdAt: serverTimestamp(),
       uid,
+      photoURL,
     });
     setFormValue('');
     bottom.current.scrollIntoView({ behavior: 'smooth' });
@@ -61,14 +64,15 @@ const ChatRoom = () => {
 
   return (
     <>
-      <div className='mx-auto h-[300px] w-[600px] overflow-scroll bg-yellow-100'>
+      <div className='mx-auto h-[400px] w-[600px] overflow-scroll bg-yellow-100'>
         <h1 className='text-center text-xl'>Chat Room</h1>
         <div>
           {loadingMessages && <p>Loading...</p>}
           {messages &&
-            messages.map((msg) => <ChatMessage key={msg.id} message={msg} />)}
+            messages.map((msg) => (
+              <ChatMessage key={msg.id} message={msg} userName={userName} />
+            ))}
           {error && <p className='text-red-500'>{error}</p>}
-          {/* <div ref={bottom}></div> */}
         </div>
         <div ref={bottom}></div>
       </div>
@@ -95,12 +99,26 @@ const ChatRoom = () => {
   );
 };
 
-const ChatMessage = ({ message }) => {
-  const { text, uid } = message;
+const ChatMessage = ({ message, userName }) => {
+  const { text, uid, photoURL } = message;
 
-  const messageClass = uid === auth.currentUser.uid ? 'sent' : 'received';
+  console.log('photoURL', photoURL);
 
-  return <p>{text}</p>;
+  const messageClass =
+    uid === auth.currentUser.uid
+      ? 'bg-green-200'
+      : 'bg-violet-200 justify-self-end';
+
+  return (
+    <div className='mb-2 flex items-center justify-start gap-x-2'>
+      <div className='flex w-[40px] flex-col items-center justify-center'>
+        <img src={photoURL || '/user.webp'} className='w-full rounded-full' />
+        {/* <p>{userName}</p> */}
+      </div>
+
+      <p className={`${messageClass} w-fit rounded-3xl px-4 py-2`}>{text}</p>
+    </div>
+  );
 };
 
 const App = () => {
@@ -134,7 +152,11 @@ const App = () => {
         <Signout auth={auth} />
       </header>
       <section>
-        {user ? <ChatRoom /> : <Signin signInWithGoogle={signInWithGoogle} />}
+        {user ? (
+          <ChatRoom user={user} />
+        ) : (
+          <Signin signInWithGoogle={signInWithGoogle} />
+        )}
       </section>
     </>
   );
