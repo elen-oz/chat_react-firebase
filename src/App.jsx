@@ -24,7 +24,7 @@ const App = () => {
         <div className='mx-auto max-h-screen max-w-[850px]'>
           <div className=''>
             <header className='flex justify-between p-2'>
-              <h1 className='text-center text-xl'>Chat Room</h1>
+              <h1 className='text-center text-xl font-bold'>Live Chat</h1>
               <Signout auth={auth} />
             </header>
             <section>{user && <ChatRoom user={user} />}</section>
