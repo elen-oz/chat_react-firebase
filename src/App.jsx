@@ -5,12 +5,16 @@ import {
   query,
   orderBy,
   limit,
+  FieldValue,
+  serverTimestamp,
+  addDoc,
 } from 'firebase/firestore';
 import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import Signin from './components/Signin';
 import Signout from './components/Signout';
+import { useState } from 'react';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyB6Zsb1iMRIQm27wz0W8coHZnBRp5Hf738',
@@ -26,11 +30,28 @@ const auth = getAuth(app);
 const firestore = getFirestore(app);
 
 const ChatRoom = () => {
+  const messagesRef = collection(firestore, 'messages');
+
   const [messages, loadingMessages, error] = useCollectionData(
-    query(collection(firestore, 'messages'), orderBy('createdAt'), limit(25)),
+    query(messagesRef, orderBy('createdAt'), limit(25)),
   );
 
+  const [formValue, setFormValue] = useState('');
+
   console.log('messages', messages);
+
+  const sendMessage = async (e) => {
+    e.preventDefault();
+    const { uid } = auth.currentUser;
+
+    await addDoc(messagesRef, {
+      text: formValue,
+      createdAt: serverTimestamp(),
+      uid,
+    });
+
+    setFormValue('');
+  };
 
   return (
     <div className='mx-auto h-screen w-[600px] bg-yellow-100'>
@@ -41,12 +62,27 @@ const ChatRoom = () => {
           messages.map((msg) => <ChatMessage key={msg.id} message={msg} />)}
         {error && <p className='text-red-500'>{error}</p>}
       </div>
+
+      <form onSubmit={sendMessage}>
+        <input
+          value={formValue}
+          onChange={(e) => setFormValue(e.target.value)}
+          placeholder='say something nice'
+        />
+
+        <button type='submit' disabled={!formValue}>
+          send
+        </button>
+      </form>
     </div>
   );
 };
 
 const ChatMessage = ({ message }) => {
   const { text, uid } = message;
+
+  const messageClass = uid === auth.currentUser.uid ? 'sent' : 'received';
+
   return <p>{text}</p>;
 };
 
