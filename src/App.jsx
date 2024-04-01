@@ -1,3 +1,5 @@
+import { useState, useRef, useEffect } from 'react';
+
 import { initializeApp } from 'firebase/app';
 import {
   getFirestore,
@@ -5,7 +7,6 @@ import {
   query,
   orderBy,
   limit,
-  FieldValue,
   serverTimestamp,
   addDoc,
 } from 'firebase/firestore';
@@ -14,7 +15,6 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import Signin from './components/Signin';
 import Signout from './components/Signout';
-import { useState } from 'react';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyB6Zsb1iMRIQm27wz0W8coHZnBRp5Hf738',
@@ -30,13 +30,19 @@ const auth = getAuth(app);
 const firestore = getFirestore(app);
 
 const ChatRoom = () => {
+  const bottom = useRef();
   const messagesRef = collection(firestore, 'messages');
+  const [formValue, setFormValue] = useState('');
 
   const [messages, loadingMessages, error] = useCollectionData(
     query(messagesRef, orderBy('createdAt'), limit(25)),
   );
 
-  const [formValue, setFormValue] = useState('');
+  useEffect(() => {
+    if (bottom.current) {
+      bottom.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
 
   console.log('messages', messages);
 
@@ -49,32 +55,43 @@ const ChatRoom = () => {
       createdAt: serverTimestamp(),
       uid,
     });
-
     setFormValue('');
+    bottom.current.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
-    <div className='mx-auto h-screen w-[600px] bg-yellow-100'>
-      <h1 className='text-center text-xl'>Chat Room</h1>
-      <div>
-        {loadingMessages && <p>Loading...</p>}
-        {messages &&
-          messages.map((msg) => <ChatMessage key={msg.id} message={msg} />)}
-        {error && <p className='text-red-500'>{error}</p>}
+    <>
+      <div className='mx-auto h-[300px] w-[600px] overflow-scroll bg-yellow-100'>
+        <h1 className='text-center text-xl'>Chat Room</h1>
+        <div>
+          {loadingMessages && <p>Loading...</p>}
+          {messages &&
+            messages.map((msg) => <ChatMessage key={msg.id} message={msg} />)}
+          {error && <p className='text-red-500'>{error}</p>}
+          {/* <div ref={bottom}></div> */}
+        </div>
+        <div ref={bottom}></div>
       </div>
-
-      <form onSubmit={sendMessage}>
+      <form
+        onSubmit={sendMessage}
+        className='mx-auto flex w-[600px] justify-between gap-x-2'
+      >
         <input
           value={formValue}
           onChange={(e) => setFormValue(e.target.value)}
-          placeholder='say something nice'
+          placeholder='say something'
+          className='w-full px-2'
         />
 
-        <button type='submit' disabled={!formValue}>
+        <button
+          type='submit'
+          disabled={!formValue}
+          className='rounded-md bg-blue-600 px-4 py-2 text-white'
+        >
           send
         </button>
       </form>
-    </div>
+    </>
   );
 };
 
