@@ -1,6 +1,6 @@
 # React Firebase Chat App
 
-**[Click Here to See Live](chat-react-firebase-6de84.web.app/)**
+**[Click Here to See Live](https://chat-react-firebase-6de84.web.app/)**
 
 Simple chat application - built with React and Firebase. Users can sign in with Google authentication and send messages in a chat room.
 
