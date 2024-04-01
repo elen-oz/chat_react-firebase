@@ -1,17 +1,19 @@
-// import firebase from 'firebase/app';
-// import 'firebase/firestore';
-// import 'firebase/auth';
-// import { useAuthState } from 'react-firebase-hooks/auth';
-// import { useCollectionData } from 'react-firebase-hooks/firestore';
-
 import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import {
+  getFirestore,
+  collection,
+  query,
+  orderBy,
+  limit,
+  doc,
+  getDoc,
+  getDocs,
+} from 'firebase/firestore';
 import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import Signin from './components/Signin';
-import { Result } from 'postcss';
-import ChatRoom from './components/ChatRoom';
+// import ChatRoom from './components/ChatRoom';
 import Signout from './components/Signout';
 
 const firebaseConfig = {
@@ -27,14 +29,60 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const firestore = getFirestore(app);
 
-// const provider = new GoogleAuthProvider();
+const ChatRoom = () => {
+  // const [messages, setMessages] = useState([]);
 
-// firebase.initializeApp({
-//   conf...
-// });
+  const messagesRef = collection(firestore, 'messages');
+  // const query = messagesRef.orderBy('createdAt').limit(25);
+  // const [messages] = useCollectionData(query, { idField: 'id' });
 
-// const auth = firebase.auth();
-// const firestore = firebase.firestore();
+  const [messages, loadingMessages, error] = useCollectionData(
+    query(collection(firestore, 'messages')),
+  );
+
+  console.log('messages', messages);
+
+  // const q = query(messagesRef, orderBy('createdAt', 'desc'), limit(25));
+  // const [messages] = useCollectionData(q, { idField: 'id' });
+
+  // const docSnap = await getDoc(messagesRef);
+
+  // if (docSnap.exists()) {
+  //   console.log('Document data:', docSnap.data());
+  // } else {
+  //   console.log('No such document!');
+  // }
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const messagesRef = collection(firestore, 'messages');
+  //     const q = query(messagesRef, orderBy('createdAt', 'desc'), limit(25));
+  //     const querySnapshot = await getDocs(q);
+  //     const data = querySnapshot.docs.map((doc) => ({
+  //       id: doc.id,
+  //       ...doc.data(),
+  //     }));
+  //     setMessages(data);
+  //   };
+
+  //   fetchData();
+  // }, []);
+
+  return (
+    <div className='mx-auto h-screen w-[600px] bg-yellow-100'>
+      <h1 className='text-center text-xl'>Chat Room</h1>
+      <div>
+        {messages &&
+          messages.map((msg) => <ChatMessage key={msg.id} message={msg} />)}
+      </div>
+    </div>
+  );
+};
+
+const ChatMessage = ({ message }) => {
+  const { text, uid } = message;
+  return <p>{text}</p>;
+};
 
 const App = () => {
   const [user] = useAuthState(auth);
@@ -60,8 +108,6 @@ const App = () => {
         console.error(errorCode, errorMessage);
       });
   };
-
-  // console.log('auth', auth.currentUser);
 
   return (
     <>
