@@ -1,9 +1,16 @@
+import { useEffect, useState } from 'react';
 import { auth } from '../firebase';
+import { getFormattedTime } from '../utils';
 
 const ChatMessage = ({ message, userName }) => {
-  const { text, uid, photoURL } = message;
+  const { text, uid, photoURL, createdAt } = message;
+  const [formattedTime, setFormattedTime] = useState('');
 
-  console.log('photoURL', photoURL);
+  useEffect(() => {
+    if (createdAt) {
+      setFormattedTime(getFormattedTime(createdAt));
+    }
+  }, [createdAt]);
 
   const messageClass =
     uid === auth.currentUser.uid
@@ -17,7 +24,14 @@ const ChatMessage = ({ message, userName }) => {
         {/* <p>{userName}</p> */}
       </div>
 
-      <p className={`${messageClass} w-fit rounded-3xl px-4 py-2`}>{text}</p>
+      <div className='flex w-full flex-row items-center justify-between'>
+        <div
+          className={`${messageClass} w-fit rounded-3xl px-4 py-2 shadow-lg`}
+        >
+          {text}
+        </div>
+        <div className='italic text-stone-400'>{formattedTime}</div>
+      </div>
     </div>
   );
 };
