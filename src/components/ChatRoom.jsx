@@ -58,7 +58,7 @@ const ChatRoom = ({ user }) => {
       )}
       {messages && (
         <>
-          <div className='h-[580px] rounded-lg bg-stone-50 px-2'>
+          <div className='h-[550px] rounded-lg  bg-stone-50 px-2 sm:h-[580px]'>
             <div className='h-full overflow-y-scroll py-2'>
               {messages.map((msg) => (
                 <ChatMessage key={msg.id} message={msg} userName={userName} />
