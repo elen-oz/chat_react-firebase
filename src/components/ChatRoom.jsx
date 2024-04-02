@@ -44,7 +44,7 @@ const ChatRoom = ({ user }) => {
   };
 
   return (
-    <section className='mx-auto flex w-[600px] flex-col justify-between'>
+    <section className='mx-auto flex w-full flex-col justify-between px-2 sm:w-[600px]'>
       {loadingMessages && (
         <div className='flex h-full w-full flex-col items-center justify-center text-white'>
           Loading...
@@ -58,7 +58,7 @@ const ChatRoom = ({ user }) => {
       )}
       {messages && (
         <>
-          <div className='h-[600px] rounded-lg bg-stone-50 px-2'>
+          <div className='h-[580px] rounded-lg bg-stone-50 px-2'>
             <div className='h-full overflow-y-scroll py-2'>
               {messages.map((msg) => (
                 <ChatMessage key={msg.id} message={msg} userName={userName} />
@@ -68,7 +68,7 @@ const ChatRoom = ({ user }) => {
           </div>
           <form
             onSubmit={sendMessage}
-            className='mx-auto mt-2 flex w-full justify-between gap-x-2'
+            className='mx-auto mt-3 flex w-full justify-between gap-x-3'
           >
             <input
               value={formValue}

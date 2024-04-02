@@ -24,13 +24,15 @@ const ChatMessage = ({ message, userName }) => {
         {/* <p>{userName}</p> */}
       </div>
 
-      <div className='flex w-full flex-row items-center justify-between'>
+      <div className='flex w-full flex-row items-end justify-between gap-x-4'>
         <div
           className={`${messageClass} w-fit rounded-3xl px-4 py-2 shadow-lg`}
         >
           {text}
         </div>
-        <div className='italic text-stone-400'>{formattedTime}</div>
+        <div className='whitespace-nowrap py-2 text-sm italic text-stone-400'>
+          {formattedTime}
+        </div>
       </div>
     </div>
   );
