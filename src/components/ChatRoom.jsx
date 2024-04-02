@@ -58,11 +58,13 @@ const ChatRoom = ({ user }) => {
       )}
       {messages && (
         <>
-          <div className='border-stone-150 max-h-[580px] overflow-scroll rounded-lg border-[1px] bg-stone-50 p-4'>
-            {messages.map((msg) => (
-              <ChatMessage key={msg.id} message={msg} userName={userName} />
-            ))}
-            <div ref={bottom}></div>
+          <div className='h-[600px] rounded-lg bg-stone-50 px-2'>
+            <div className='h-full overflow-y-scroll py-2'>
+              {messages.map((msg) => (
+                <ChatMessage key={msg.id} message={msg} userName={userName} />
+              ))}
+              <div ref={bottom}></div>
+            </div>
           </div>
           <form
             onSubmit={sendMessage}
@@ -78,7 +80,7 @@ const ChatRoom = ({ user }) => {
             <button
               type='submit'
               disabled={!formValue}
-              className='cursor-pointer whitespace-nowrap rounded-lg bg-violet-600 px-4 py-2 text-white shadow-lg hover:bg-violet-800'
+              className='cursor-pointer whitespace-nowrap rounded-lg bg-green-500 px-4 py-2 font-bold text-white shadow-lg hover:bg-green-800'
             >
               send 🕊️
             </button>

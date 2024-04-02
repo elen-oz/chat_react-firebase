@@ -18,7 +18,7 @@ const ChatMessage = ({ message, userName }) => {
       : 'bg-violet-200 justify-self-end';
 
   return (
-    <div className='mb-2 flex items-center justify-start gap-x-2'>
+    <div className='mb-2 flex items-center justify-start gap-x-2 px-2'>
       <div className='flex w-[40px] flex-col items-center justify-center'>
         <img src={photoURL || '/user.webp'} className='w-full rounded-full' />
         {/* <p>{userName}</p> */}
