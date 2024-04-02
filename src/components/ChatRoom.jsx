@@ -44,46 +44,48 @@ const ChatRoom = ({ user }) => {
   };
 
   return (
-    <div className='mx-auto flex w-[600px] flex-col justify-between'>
-      <div className='border-stone-150 max-h-[580px] overflow-scroll rounded-lg border-[1px] p-4'>
-        {loadingMessages && (
-          <div className='flex flex-col items-center justify-center'>
-            Loading...
+    <section className='mx-auto flex w-[600px] flex-col justify-between'>
+      {loadingMessages && (
+        <div className='flex h-full w-full flex-col items-center justify-center text-white'>
+          Loading...
+        </div>
+      )}
+      {error && (
+        <p className='text-orange flex flex-col items-center justify-center text-orange-400'>
+          An error occur!
+          {error.code} {error.message}
+        </p>
+      )}
+      {messages && (
+        <>
+          <div className='border-stone-150 max-h-[580px] overflow-scroll rounded-lg border-[1px] bg-stone-50 p-4'>
+            {messages.map((msg) => (
+              <ChatMessage key={msg.id} message={msg} userName={userName} />
+            ))}
+            <div ref={bottom}></div>
           </div>
-        )}
+          <form
+            onSubmit={sendMessage}
+            className='mx-auto mt-2 flex w-full justify-between gap-x-2'
+          >
+            <input
+              value={formValue}
+              onChange={(e) => setFormValue(e.target.value)}
+              placeholder='say something'
+              className='w-full rounded-lg border-[1px] border-stone-200 px-2 shadow-lg'
+            />
 
-        {error && (
-          <p className='flex flex-col items-center justify-center text-red-500'>
-            {error}
-          </p>
-        )}
-
-        {messages &&
-          messages.map((msg) => (
-            <ChatMessage key={msg.id} message={msg} userName={userName} />
-          ))}
-        <div ref={bottom}></div>
-      </div>
-      <form
-        onSubmit={sendMessage}
-        className='mx-auto mt-2 flex w-full justify-between gap-x-2'
-      >
-        <input
-          value={formValue}
-          onChange={(e) => setFormValue(e.target.value)}
-          placeholder='say something'
-          className='w-full rounded-lg border-[1px] border-stone-200 px-2 shadow-lg'
-        />
-
-        <button
-          type='submit'
-          disabled={!formValue}
-          className='cursor-pointer whitespace-nowrap rounded-lg bg-violet-600 px-4 py-2 text-white shadow-lg hover:bg-violet-800'
-        >
-          send 🕊️
-        </button>
-      </form>
-    </div>
+            <button
+              type='submit'
+              disabled={!formValue}
+              className='cursor-pointer whitespace-nowrap rounded-lg bg-violet-600 px-4 py-2 text-white shadow-lg hover:bg-violet-800'
+            >
+              send 🕊️
+            </button>
+          </form>
+        </>
+      )}
+    </section>
   );
 };
 
