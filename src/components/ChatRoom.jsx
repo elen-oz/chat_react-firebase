@@ -8,9 +8,11 @@ import {
   serverTimestamp,
   addDoc,
 } from 'firebase/firestore';
-
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import { auth, firestore } from '../firebase';
+
+import { FaRegPaperPlane } from 'react-icons/fa6';
+
 import ChatMessage from './ChatMessage';
 
 const ChatRoom = ({ user }) => {
@@ -82,7 +84,7 @@ const ChatRoom = ({ user }) => {
               disabled={!formValue}
               className='cursor-pointer whitespace-nowrap rounded-lg bg-green-500 px-4 py-2 font-bold text-white shadow-lg hover:bg-green-800'
             >
-              send 🕊️
+              <FaRegPaperPlane />
             </button>
           </form>
         </>
